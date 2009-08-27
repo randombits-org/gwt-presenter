@@ -23,6 +23,8 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
 
     private List<HandlerRegistration> handlerRegistrations = new java.util.ArrayList<HandlerRegistration>();
 
+    private boolean bound = false;
+
     public BasicPresenter( D display, EventBus eventBus ) {
         this.display = display;
         this.eventBus = eventBus;
@@ -31,7 +33,7 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
     public void bind() {
         onBind();
 
-        if ( getPlace() != null )
+        if ( getPlace() != null ) {
             registerHandler( eventBus.addHandler( PlaceRequestEvent.getType(), new PlaceRequestHandler() {
 
                 public void onPlaceRequest( PlaceRequestEvent event ) {
@@ -42,6 +44,8 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
                     }
                 }
             } ) );
+        }
+        bound = true;
     }
 
     /**
@@ -63,6 +67,8 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
         handlerRegistrations.clear();
 
         onUnbind();
+
+        bound = false;
     }
 
     /**
@@ -77,6 +83,16 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
      * will have already been removed at this point.
      */
     protected abstract void onUnbind();
+
+    /**
+     * Checks if the presenter has been bound. Will be set to false after a call
+     * to {@link #unbind()}.
+     * 
+     * @return The current bound status.
+     */
+    public boolean isBound() {
+        return bound;
+    }
 
     /**
      * Returns the display for the presenter.
@@ -106,4 +122,14 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
      *            The request.
      */
     protected abstract void onPlaceRequest( PlaceRequest request );
+
+    /**
+     * Triggers a {@link PresenterRevealedEvent}. Subclasses should override
+     * this method and call <code>super.revealDisplay()</code> if they need to
+     * perform extra operations when being revealed.
+     */
+    public void revealDisplay() {
+        eventBus.fireEvent( new PresenterRevealedEvent( this ) );
+    }
+
 }

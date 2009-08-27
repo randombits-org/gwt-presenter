@@ -2,6 +2,16 @@ package net.customware.gwt.presenter.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+/**
+ * An abstract base class implementation of {@link AsyncCallback} which will
+ * automatically call the {@link Display#startProcessing()} and
+ * {@link Display#stopProcessing()} methods to inform the display that work is
+ * being done.
+ * 
+ * @author David Peterson
+ * 
+ * @param <T> The type to return.
+ */
 public abstract class DisplayCallback<T> implements AsyncCallback<T> {
 
     private final Display display;
@@ -20,6 +30,11 @@ public abstract class DisplayCallback<T> implements AsyncCallback<T> {
 
     }
 
+    /**
+     * This method is called when the call returns successfully.
+     * 
+     * @param value The returned value.
+     */
     protected abstract void handleSuccess( T value );
 
     public void onFailure( Throwable e ) {
@@ -30,6 +45,10 @@ public abstract class DisplayCallback<T> implements AsyncCallback<T> {
         }
     }
 
+    /**
+     * 
+     * @param e
+     */
     protected abstract void handleFailure( Throwable e );
 
     protected void reset( Throwable e ) {
