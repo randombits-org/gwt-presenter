@@ -3,7 +3,7 @@
 	<groupId>net.customware.gwt.presenter</groupId>
 	<artifactId>gwt-presenter</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<name>GWT Presenter</name>
 	<url>http://code.google.com/p/gwt-presenter</url>
 
@@ -64,9 +64,9 @@
 	</dependencies>
 
 	<scm>
-		<connection>scm:svn:http://gwt-presenter.googlecode.com/svn/tags/gwt-presenter-1.0.0</connection>
-		<developerConnection>scm:svn:https://gwt-presenter.googlecode.com/svn/tags/gwt-presenter-1.0.0</developerConnection>
-		<url>http://gwt-presenter.googlecode.com/svn/tags/gwt-presenter-1.0.0</url>
+		<connection>scm:svn:http://gwt-presenter.googlecode.com/svn/trunk/</connection>
+		<developerConnection>scm:svn:https://gwt-presenter.googlecode.com/svn/trunk/</developerConnection>
+		<url>http://gwt-presenter.googlecode.com/svn/trunk/</url>
 	</scm>
 
 	<build>
