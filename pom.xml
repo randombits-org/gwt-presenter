@@ -31,7 +31,7 @@
 	</issueManagement>
 
 	<properties>
-		<gwt.version>1.6.4</gwt.version>
+		<gwt.version>1.7.1</gwt.version>
 		<gin.version>1.0-20090622</gin.version>
 	</properties>
 
@@ -46,6 +46,7 @@
 			<groupId>com.google.gwt.inject</groupId>
 			<artifactId>gin</artifactId>
 			<version>${gin.version}</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Testing Dependencies -->

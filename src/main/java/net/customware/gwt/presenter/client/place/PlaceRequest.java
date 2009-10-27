@@ -4,6 +4,29 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * This class represents a 'request' for a place location. It includes the 'id'
+ * of the place as well as any parameter values. It can convert from and to
+ * String tokens for use with the GWT History.
+ * 
+ * <p>
+ * Place request tokens are formatted like this:
+ * 
+ * <code>#id(;key=value)*</code>
+ * 
+ * <p>
+ * There is a mandatory 'id' value, followed by 0 or more key/value pairs,
+ * separated by semi-colons (';'). A few examples follow:
+ * 
+ * <ul>
+ * <li> <code>#users</code> </li>
+ * <li> <code>#user;name=j.blogs</code> </li>
+ * <li> <code>#user-email;name=j.blogs;type=home</code> </li>
+ * </ul>
+ * 
+ * @author David Peterson
+ * 
+ */
 public class PlaceRequest {
 
     private static final String PARAM_SEPARATOR = ";";
@@ -18,25 +41,25 @@ public class PlaceRequest {
 
     private static final String VALUE_ESCAPE = VALUE_SEPARATOR + VALUE_SEPARATOR;
 
-    private final Place place;
+    private final String id;
 
     private final Map<String, String> params;
 
-    public PlaceRequest( Place id ) {
-        this.place = id;
+    public PlaceRequest( String id ) {
+        this.id = id;
         this.params = null;
     }
 
     private PlaceRequest( PlaceRequest req, String name, String value ) {
-        this.place = req.place;
+        this.id = req.id;
         this.params = new java.util.HashMap<String, String>();
         if ( req.params != null )
             this.params.putAll( req.params );
         this.params.put( name, value );
     }
 
-    public Place getPlace() {
-        return place;
+    public String getId() {
+        return id;
     }
 
     public Set<String> getParameterNames() {
@@ -77,7 +100,7 @@ public class PlaceRequest {
     public boolean equals( Object obj ) {
         if ( obj instanceof PlaceRequest ) {
             PlaceRequest req = ( PlaceRequest ) obj;
-            if ( !req.equals( req.place ) )
+            if ( !req.equals( req.id ) )
                 return false;
 
             if ( params == null )
@@ -90,16 +113,15 @@ public class PlaceRequest {
 
     @Override
     public int hashCode() {
-        return 11 * ( place.hashCode() + ( params == null ? 0 : params.hashCode() ) );
+        return 11 * ( id.hashCode() + ( params == null ? 0 : params.hashCode() ) );
     }
 
     /**
      * Outputs the place as a GWT history token.
      */
-    @Override
-    public String toString() {
+    public String toHistoryToken() {
         StringBuilder out = new StringBuilder();
-        out.append( place.toString() );
+        out.append( id.toString() );
 
         if ( params != null && params.size() > 0 ) {
             for ( Map.Entry<String, String> entry : params.entrySet() ) {
@@ -111,24 +133,29 @@ public class PlaceRequest {
         return out.toString();
     }
 
+    @Override
+    public String toString() {
+        return toHistoryToken();
+    }
+
     /**
-     * Parses a GWT history token into a {@link Place} instance.
+     * Parses a GWT history token into a {@link String} instance.
      * 
      * @param token
      *            The token.
      * @return The place, or <code>null</code> if the token could not be
      *         parsed.
      */
-    public static PlaceRequest fromString( String token ) throws PlaceParsingException {
+    public static PlaceRequest fromHistoryToken( String token ) throws PlaceParsingException {
         PlaceRequest req = null;
 
         int split = token.indexOf( PARAM_SEPARATOR );
         if ( split == 0 ) {
             throw new PlaceParsingException( "Place id is missing." );
         } else if ( split == -1 ) {
-            req = new PlaceRequest( new Place( token ) );
+            req = new PlaceRequest( new String( token ) );
         } else if ( split >= 0 ) {
-            req = new PlaceRequest( new Place( token.substring( 0, split ) ) );
+            req = new PlaceRequest( new String( token.substring( 0, split ) ) );
             String paramsChunk = token.substring( split + 1 );
             String[] paramTokens = paramsChunk.split( PARAM_PATTERN );
             for ( String paramToken : paramTokens ) {

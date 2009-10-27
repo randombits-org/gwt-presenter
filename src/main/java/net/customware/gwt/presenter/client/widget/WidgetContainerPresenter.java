@@ -1,6 +1,5 @@
 package net.customware.gwt.presenter.client.widget;
 
-import java.util.Collections;
 import java.util.List;
 
 import net.customware.gwt.presenter.client.EventBus;
@@ -20,11 +19,31 @@ public abstract class WidgetContainerPresenter<T extends WidgetContainerDisplay>
 
     private WidgetPresenter<?> currentPresenter;
 
-    public WidgetContainerPresenter( T display, EventBus eventBus,
-            WidgetPresenter<?>... presenters ) {
+    public WidgetContainerPresenter( T display, EventBus eventBus, WidgetPresenter<?>... presenters ) {
         super( display, eventBus );
         this.presenters = new java.util.ArrayList<WidgetPresenter<?>>();
-        Collections.addAll( this.presenters, presenters );
+        for ( WidgetPresenter<?> presenter : presenters ) {
+            addPresenter( presenter );
+        }
+    }
+
+    /**
+     * Adds the list of presenters, if they are unbound. Bound presenters will
+     * simply be ignored, and <code>false</code> will be returned if any were
+     * ignored.
+     * 
+     * @param presenters
+     *            The list of presenters.
+     * @return <code>false</code> if any of the presenters were bound, and
+     *         therefor not added.
+     */
+    protected boolean addPresenters( WidgetPresenter<?>... presenters ) {
+        boolean allSuccess = true;
+        for ( WidgetPresenter<?> presenter : presenters ) {
+            if ( !addPresenter( presenter ) )
+                allSuccess = false;
+        }
+        return allSuccess;
     }
 
     /**
@@ -47,12 +66,14 @@ public abstract class WidgetContainerPresenter<T extends WidgetContainerDisplay>
         for ( WidgetPresenter<?> presenter : presenters ) {
             display.addWidget( presenter.getDisplay().asWidget() );
         }
+        if ( presenters.size() > 0 )
+            display.showWidget( presenters.get( 0 ).getDisplay().asWidget() );
 
         eventBus.addHandler( PresenterRevealedEvent.getType(), new PresenterRevealedHandler() {
             public void onPresenterRevealed( PresenterRevealedEvent event ) {
                 if ( presenters.contains( event.getPresenter() ) ) {
                     showPresenter( ( WidgetPresenter<?> ) event.getPresenter() );
-                    revealDisplay();
+                    revealDisplay( false );
                 }
             }
         } );
@@ -84,6 +105,14 @@ public abstract class WidgetContainerPresenter<T extends WidgetContainerDisplay>
     public void refreshDisplay() {
         if ( currentPresenter != null )
             currentPresenter.refreshDisplay();
+    }
+
+    @Override
+    public void revealDisplay() {
+        if ( currentPresenter != null ) {
+            currentPresenter.revealDisplay();
+        }
+        super.revealDisplay();
     }
 
 }

@@ -2,11 +2,6 @@ package net.customware.gwt.presenter.client;
 
 import java.util.List;
 
-import net.customware.gwt.presenter.client.place.Place;
-import net.customware.gwt.presenter.client.place.PlaceRequest;
-import net.customware.gwt.presenter.client.place.PlaceRequestEvent;
-import net.customware.gwt.presenter.client.place.PlaceRequestHandler;
-
 import com.google.gwt.event.shared.HandlerRegistration;
 
 public abstract class BasicPresenter<D extends Display> implements Presenter {
@@ -32,19 +27,6 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
 
     public void bind() {
         onBind();
-
-        if ( getPlace() != null ) {
-            registerHandler( eventBus.addHandler( PlaceRequestEvent.getType(), new PlaceRequestHandler() {
-
-                public void onPlaceRequest( PlaceRequestEvent event ) {
-                    Place place = getPlace();
-                    if ( place != null && place.equals( event.getRequest().getPlace() ) ) {
-                        BasicPresenter.this.onPlaceRequest( event.getRequest() );
-                        revealDisplay();
-                    }
-                }
-            } ) );
-        }
         bound = true;
     }
 
@@ -61,6 +43,8 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
     }
 
     public void unbind() {
+        bound = false;
+
         for ( HandlerRegistration reg : handlerRegistrations ) {
             reg.removeHandler();
         }
@@ -68,7 +52,6 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
 
         onUnbind();
 
-        bound = false;
     }
 
     /**
@@ -103,25 +86,18 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
         return display;
     }
 
-    protected PlaceRequest getPlaceRequest() {
-        return getPlace().request();
+    /**
+     * Fires a {@link PresenterRefreshedEvent} to the {@link EventBus}.
+     * Implementations should call this <em>after</em> any work has been
+     * completed and the display has actually been refreshed.
+     */
+    protected void firePresenterRefreshedEvent() {
+        eventBus.fireEvent( new PresenterRefreshedEvent( this ) );
     }
 
-    /**
-     * The {@link Place} that represents this Presenter.
-     * 
-     * @return The presenter's place.
-     */
-    public abstract Place getPlace();
-
-    /**
-     * This method is called when a {@link PlaceRequestEvent} occurs that
-     * matches with the value from {@link #getPlace()}.
-     * 
-     * @param request
-     *            The request.
-     */
-    protected abstract void onPlaceRequest( PlaceRequest request );
+    protected void firePresenterRevealedEvent( boolean originator ) {
+        eventBus.fireEvent( new PresenterRevealedEvent( this, originator ) );
+    }
 
     /**
      * Triggers a {@link PresenterRevealedEvent}. Subclasses should override
@@ -129,7 +105,11 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
      * perform extra operations when being revealed.
      */
     public void revealDisplay() {
-        eventBus.fireEvent( new PresenterRevealedEvent( this ) );
+        revealDisplay( true );
+    }
+
+    protected void revealDisplay( boolean originator ) {
+        firePresenterRevealedEvent( originator );
     }
 
 }

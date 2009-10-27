@@ -3,6 +3,7 @@ package net.customware.gwt.presenter.client.gin;
 import static com.google.inject.name.Names.named;
 import net.customware.gwt.presenter.client.Display;
 import net.customware.gwt.presenter.client.Presenter;
+import net.customware.gwt.presenter.client.place.Place;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.gwt.inject.client.binder.GinLinkedBindingBuilder;
@@ -12,6 +13,10 @@ public abstract class AbstractPresenterModule extends AbstractGinModule {
 
     public AbstractPresenterModule() {
         super();
+    }
+
+    protected void bindPlace( Class<? extends Place> place ) {
+        bind( place ).asEagerSingleton();
     }
 
     /**

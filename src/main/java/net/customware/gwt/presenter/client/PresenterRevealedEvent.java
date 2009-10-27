@@ -18,18 +18,49 @@ public class PresenterRevealedEvent extends GwtEvent<PresenterRevealedHandler> {
 
     private static final GwtEvent.Type<PresenterRevealedHandler> TYPE = new GwtEvent.Type<PresenterRevealedHandler>();
 
-    private Presenter presenter;
+    private final Presenter presenter;
+
+    private boolean originator;
 
     public static GwtEvent.Type<PresenterRevealedHandler> getType() {
         return TYPE;
     }
 
+    /**
+     * Constructs a new revelation event, specifying that it is the originator.
+     * 
+     * @param presenter
+     */
     public PresenterRevealedEvent( Presenter presenter ) {
+        this( presenter, true );
+    }
+
+    /**
+     * Constructs a new revelation event, with the specified 'originator'
+     * status.
+     * 
+     * @param presenter
+     *            The presenter that has been revealed.
+     * @param originator
+     *            If <code>true</code>, the presenter is the originator of
+     *            the revelation chain.
+     */
+    public PresenterRevealedEvent( Presenter presenter, boolean originator ) {
         this.presenter = presenter;
+        this.originator = originator;
     }
 
     public Presenter getPresenter() {
         return presenter;
+    }
+
+    /**
+     * Returns <code>true</code> if the presenter in this event originated the
+     * revelation, or <code>false</code> if it is a consequence of being
+     * revealed by a child presenter.
+     */
+    public boolean isOriginator() {
+        return originator;
     }
 
     @Override
