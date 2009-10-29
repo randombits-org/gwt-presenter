@@ -5,21 +5,20 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import net.customware.gwt.presenter.client.EventBus;
 
 @Singleton
 public class PlaceManager {
 
     private class PlaceEventHandler implements ValueChangeHandler<String>, PlaceRevealedHandler,
-            PlaceChangedHandler {
+        PlaceChangedHandler {
 
         @Override
         public void onPlaceRevealed( PlaceRevealedEvent event ) {
             updateHistory( event.getPlace() );
         }
 
-        public void onPlaceChange( PlaceChangedEvent event ) {
+        public void onPlaceChanged( PlaceChangedEvent event ) {
             Place place = event.getPlace();
             try {
                 if ( place.matchesRequest( PlaceRequest.fromHistoryToken( History.getToken() ) ) ) {
@@ -38,7 +37,7 @@ public class PlaceManager {
         public void onValueChange( ValueChangeEvent<String> event ) {
             try {
                 eventBus
-                        .fireEvent( new PlaceRequestEvent( PlaceRequest.fromHistoryToken( event.getValue() ), true ) );
+                    .fireEvent( new PlaceRequestEvent( PlaceRequest.fromHistoryToken( event.getValue() ), true ) );
             } catch ( PlaceParsingException e ) {
                 e.printStackTrace();
             }
@@ -79,7 +78,7 @@ public class PlaceManager {
     /**
      * Fires a {@link PlaceRequestEvent} with the current history token, if
      * present. If no history token is set, <code>false</code> is returned.
-     * 
+     *
      * @return <code>true</code>
      */
     public boolean fireCurrentPlace() {

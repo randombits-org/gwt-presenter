@@ -5,9 +5,8 @@ import com.google.gwt.event.shared.GwtEvent;
 /**
  * This event is triggered when any {@link Place} has changed state. It may or
  * may not be the current 'revealed' place.
- * 
+ *
  * @author David Peterson
- * 
  */
 public class PlaceChangedEvent extends GwtEvent<PlaceChangedHandler> {
 
@@ -27,7 +26,7 @@ public class PlaceChangedEvent extends GwtEvent<PlaceChangedHandler> {
 
     @Override
     protected void dispatch( PlaceChangedHandler handler ) {
-        handler.onPlaceChange( this );
+        handler.onPlaceChanged( this );
     }
 
     @Override

@@ -1,8 +1,8 @@
 package net.customware.gwt.presenter.client;
 
-import java.util.List;
-
 import com.google.gwt.event.shared.HandlerRegistration;
+
+import java.util.List;
 
 public abstract class BasicPresenter<D extends Display> implements Presenter {
 
@@ -26,31 +26,34 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
     }
 
     public void bind() {
-        onBind();
-        bound = true;
+        if ( !bound ) {
+            onBind();
+            bound = true;
+        }
     }
 
     /**
      * Any {@link HandlerRegistration}s added will be removed when
      * {@link #unbind()} is called. This provides a handy way to track event
      * handler registrations when binding and unbinding.
-     * 
-     * @param handlerRegistration
-     *            The registration.
+     *
+     * @param handlerRegistration The registration.
      */
     protected void registerHandler( HandlerRegistration handlerRegistration ) {
         handlerRegistrations.add( handlerRegistration );
     }
 
     public void unbind() {
-        bound = false;
+        if ( bound ) {
+            bound = false;
 
-        for ( HandlerRegistration reg : handlerRegistrations ) {
-            reg.removeHandler();
+            for ( HandlerRegistration reg : handlerRegistrations ) {
+                reg.removeHandler();
+            }
+            handlerRegistrations.clear();
+
+            onUnbind();
         }
-        handlerRegistrations.clear();
-
-        onUnbind();
 
     }
 
@@ -70,7 +73,7 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
     /**
      * Checks if the presenter has been bound. Will be set to false after a call
      * to {@link #unbind()}.
-     * 
+     *
      * @return The current bound status.
      */
     public boolean isBound() {
@@ -79,7 +82,7 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
 
     /**
      * Returns the display for the presenter.
-     * 
+     *
      * @return The display.
      */
     public D getDisplay() {
@@ -87,14 +90,21 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
     }
 
     /**
-     * Fires a {@link PresenterRefreshedEvent} to the {@link EventBus}.
-     * Implementations should call this <em>after</em> any work has been
-     * completed and the display has actually been refreshed.
+     * Fires a {@link PresenterChangedEvent} to the {@link EventBus}.
+     * Call this method any time the presenter's state has been modified.
      */
-    protected void firePresenterRefreshedEvent() {
-        eventBus.fireEvent( new PresenterRefreshedEvent( this ) );
+    protected void firePresenterChangedEvent() {
+        eventBus.fireEvent( new PresenterChangedEvent( this ) );
     }
 
+    /**
+     * Fires a {@link PresenterRevealedEvent} to the {@link EventBus}.
+     * Implementations should call this when the presenter has been
+     * revealed onscreen.
+     *
+     * @param originator If set to true, this specifies that this presenter
+     *                   was the originator of the 'revelation' request.
+     */
     protected void firePresenterRevealedEvent( boolean originator ) {
         eventBus.fireEvent( new PresenterRevealedEvent( this, originator ) );
     }
@@ -105,11 +115,13 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
      * perform extra operations when being revealed.
      */
     public void revealDisplay() {
-        revealDisplay( true );
+        onRevealDisplay();
+        firePresenterRevealedEvent( true );
     }
 
-    protected void revealDisplay( boolean originator ) {
-        firePresenterRevealedEvent( originator );
-    }
+    /**
+     * Called before firing a {@link net.customware.gwt.presenter.client.PresenterRevealedEvent}.
+     */
+    protected abstract void onRevealDisplay();
 
 }
