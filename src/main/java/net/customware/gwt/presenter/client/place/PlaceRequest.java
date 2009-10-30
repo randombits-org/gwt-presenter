@@ -8,24 +8,23 @@ import java.util.Set;
  * This class represents a 'request' for a place location. It includes the 'id'
  * of the place as well as any parameter values. It can convert from and to
  * String tokens for use with the GWT History.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * Place request tokens are formatted like this:
- * 
+ * <p/>
  * <code>#id(;key=value)*</code>
- * 
- * <p>
+ * <p/>
+ * <p/>
  * There is a mandatory 'id' value, followed by 0 or more key/value pairs,
  * separated by semi-colons (';'). A few examples follow:
- * 
+ * <p/>
  * <ul>
  * <li> <code>#users</code> </li>
  * <li> <code>#user;name=j.blogs</code> </li>
  * <li> <code>#user-email;name=j.blogs;type=home</code> </li>
  * </ul>
- * 
+ *
  * @author David Peterson
- * 
  */
 public class PlaceRequest {
 
@@ -85,11 +84,9 @@ public class PlaceRequest {
      * Returns a new instance of the request with the specified parameter name
      * and value. If a parameter with the same name was previously specified,
      * the new request contains the new value.
-     * 
-     * @param name
-     *            The new parameter name.
-     * @param value
-     *            The new parameter value.
+     *
+     * @param name  The new parameter name.
+     * @param value The new parameter value.
      * @return The new place request instance.
      */
     public PlaceRequest with( String name, String value ) {
@@ -99,8 +96,8 @@ public class PlaceRequest {
     @Override
     public boolean equals( Object obj ) {
         if ( obj instanceof PlaceRequest ) {
-            PlaceRequest req = ( PlaceRequest ) obj;
-            if ( !req.equals( req.id ) )
+            PlaceRequest req = (PlaceRequest) obj;
+            if ( !id.equals( req.id ) )
                 return false;
 
             if ( params == null )
@@ -127,7 +124,7 @@ public class PlaceRequest {
             for ( Map.Entry<String, String> entry : params.entrySet() ) {
                 out.append( PARAM_SEPARATOR );
                 out.append( escape( entry.getKey() ) ).append( VALUE_SEPARATOR )
-                        .append( escape( entry.getValue() ) );
+                    .append( escape( entry.getValue() ) );
             }
         }
         return out.toString();
@@ -140,9 +137,8 @@ public class PlaceRequest {
 
     /**
      * Parses a GWT history token into a {@link String} instance.
-     * 
-     * @param token
-     *            The token.
+     *
+     * @param token The token.
      * @return The place, or <code>null</code> if the token could not be
      *         parsed.
      */
@@ -162,7 +158,7 @@ public class PlaceRequest {
                 String[] param = paramToken.split( VALUE_PATTERN );
                 if ( param.length != 2 )
                     throw new PlaceParsingException( "Bad parameter: Parameters require a single '"
-                            + VALUE_SEPARATOR + "' between the key and value." );
+                        + VALUE_SEPARATOR + "' between the key and value." );
                 req = req.with( unescape( param[0] ), unescape( param[1] ) );
             }
         }
