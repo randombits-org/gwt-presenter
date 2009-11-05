@@ -1,6 +1,7 @@
 package net.customware.gwt.presenter.client.place;
 
 import com.google.gwt.event.shared.GwtEvent;
+import net.customware.gwt.presenter.client.EventBus;
 
 public class PlaceRequestEvent extends GwtEvent<PlaceRequestHandler> {
 
@@ -41,5 +42,21 @@ public class PlaceRequestEvent extends GwtEvent<PlaceRequestHandler> {
 
     boolean isFromHistory() {
         return fromHistory;
+    }
+
+    public static void fire( EventBus eventBus, PlaceRequest request ) {
+        fire( eventBus, request, false );
+    }
+
+    static void fire( EventBus eventBus, PlaceRequest request, boolean fromHistory ) {
+        eventBus.fireEvent( new PlaceRequestEvent( request, fromHistory ) );
+    }
+
+    public static void fire( EventBus eventBus, String historyToken ) throws PlaceParsingException {
+        fire( eventBus, historyToken, false );
+    }
+
+    static void fire( EventBus eventBus, String historyToken, boolean fromHistory ) throws PlaceParsingException {
+        fire( eventBus, PlaceRequest.fromHistoryToken( historyToken ), fromHistory );
     }
 }

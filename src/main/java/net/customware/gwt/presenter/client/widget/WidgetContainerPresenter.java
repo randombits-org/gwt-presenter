@@ -66,11 +66,8 @@ public abstract class WidgetContainerPresenter<T extends WidgetContainerDisplay>
             display.addWidget( presenter.getDisplay().asWidget() );
         }
 
-        if ( presenters.size() > 0 )
-            display.showWidget( presenters.get( 0 ).getDisplay().asWidget() );
-
         // Handle revelation events from children
-        eventBus.addHandler( PresenterRevealedEvent.getType(), new PresenterRevealedHandler() {
+        registerHandler( eventBus.addHandler( PresenterRevealedEvent.getType(), new PresenterRevealedHandler() {
             public void onPresenterRevealed( PresenterRevealedEvent event ) {
                 if ( event.getPresenter() instanceof WidgetPresenter ) {
                     WidgetPresenter<?> presenter = (WidgetPresenter<?>) event.getPresenter();
@@ -82,7 +79,7 @@ public abstract class WidgetContainerPresenter<T extends WidgetContainerDisplay>
                     }
                 }
             }
-        } );
+        } ) );
     }
 
     @Override
@@ -123,11 +120,14 @@ public abstract class WidgetContainerPresenter<T extends WidgetContainerDisplay>
     }
 
     @Override
-    public void revealDisplay() {
+    protected void onRevealDisplay() {
+        if ( currentPresenter == null && presenters.size() > 0 ) {
+            setCurrentPresenter( presenters.get( 0 ) );
+        }
+
         if ( currentPresenter != null ) {
             currentPresenter.revealDisplay();
         }
-        super.revealDisplay();
     }
 
 }

@@ -1,6 +1,7 @@
 package net.customware.gwt.presenter.client.place;
 
 import com.google.gwt.event.shared.GwtEvent;
+import net.customware.gwt.presenter.client.EventBus;
 
 public class PlaceRevealedEvent extends GwtEvent<PlaceRevealedHandler> {
 
@@ -33,5 +34,15 @@ public class PlaceRevealedEvent extends GwtEvent<PlaceRevealedHandler> {
     @Override
     public GwtEvent.Type<PlaceRevealedHandler> getAssociatedType() {
         return TYPE;
+    }
+
+    /**
+     * Call this method to fire place revealed events.
+     *
+     * @param eventBus The eventBus.
+     * @param place    The place.
+     */
+    public static void fire( EventBus eventBus, Place place ) {
+        eventBus.fireEvent( new PlaceRevealedEvent( place ) );
     }
 }

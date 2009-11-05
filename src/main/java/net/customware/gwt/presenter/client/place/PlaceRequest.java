@@ -40,27 +40,29 @@ public class PlaceRequest {
 
     private static final String VALUE_ESCAPE = VALUE_SEPARATOR + VALUE_SEPARATOR;
 
-    private final String id;
+    private final String name;
 
     private final Map<String, String> params;
 
-    public PlaceRequest( String id ) {
-        this.id = id;
+    public PlaceRequest( String name ) {
+        this.name = name;
         this.params = null;
     }
 
     private PlaceRequest( PlaceRequest req, String name, String value ) {
-        this.id = req.id;
+        this.name = req.name;
         this.params = new java.util.HashMap<String, String>();
         if ( req.params != null )
             this.params.putAll( req.params );
-        this.params.put( name, value );
+        if ( value != null )
+            this.params.put( name, value );
     }
 
-    public String getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
+    @SuppressWarnings({"unchecked"})
     public Set<String> getParameterNames() {
         if ( params != null ) {
             return params.keySet();
@@ -97,7 +99,7 @@ public class PlaceRequest {
     public boolean equals( Object obj ) {
         if ( obj instanceof PlaceRequest ) {
             PlaceRequest req = (PlaceRequest) obj;
-            if ( !id.equals( req.id ) )
+            if ( !name.equals( req.name ) )
                 return false;
 
             if ( params == null )
@@ -110,15 +112,17 @@ public class PlaceRequest {
 
     @Override
     public int hashCode() {
-        return 11 * ( id.hashCode() + ( params == null ? 0 : params.hashCode() ) );
+        return 11 * ( name.hashCode() + ( params == null ? 0 : params.hashCode() ) );
     }
 
     /**
      * Outputs the place as a GWT history token.
+     *
+     * @return The place request as a history token.
      */
     public String toHistoryToken() {
         StringBuilder out = new StringBuilder();
-        out.append( id.toString() );
+        out.append( name );
 
         if ( params != null && params.size() > 0 ) {
             for ( Map.Entry<String, String> entry : params.entrySet() ) {
@@ -141,17 +145,18 @@ public class PlaceRequest {
      * @param token The token.
      * @return The place, or <code>null</code> if the token could not be
      *         parsed.
+     * @throws PlaceParsingException if the token could not be parsed.
      */
     public static PlaceRequest fromHistoryToken( String token ) throws PlaceParsingException {
         PlaceRequest req = null;
 
         int split = token.indexOf( PARAM_SEPARATOR );
         if ( split == 0 ) {
-            throw new PlaceParsingException( "Place id is missing." );
+            throw new PlaceParsingException( "Place name is missing." );
         } else if ( split == -1 ) {
-            req = new PlaceRequest( new String( token ) );
+            req = new PlaceRequest( token );
         } else if ( split >= 0 ) {
-            req = new PlaceRequest( new String( token.substring( 0, split ) ) );
+            req = new PlaceRequest( token.substring( 0, split ) );
             String paramsChunk = token.substring( split + 1 );
             String[] paramTokens = paramsChunk.split( PARAM_PATTERN );
             for ( String paramToken : paramTokens ) {

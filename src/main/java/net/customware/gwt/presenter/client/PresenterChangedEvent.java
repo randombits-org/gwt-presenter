@@ -10,6 +10,10 @@ public class PresenterChangedEvent extends GwtEvent<PresenterChangedHandler> {
         return TYPE;
     }
 
+    public static void fire( EventBus eventBus, Presenter presenter ) {
+        eventBus.fireEvent( new PresenterChangedEvent( presenter ) );
+    }
+
     private final Presenter presenter;
 
     public PresenterChangedEvent( Presenter presenter ) {
@@ -29,5 +33,4 @@ public class PresenterChangedEvent extends GwtEvent<PresenterChangedHandler> {
     public com.google.gwt.event.shared.GwtEvent.Type<PresenterChangedHandler> getAssociatedType() {
         return getType();
     }
-
 }

@@ -94,7 +94,7 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
      * Call this method any time the presenter's state has been modified.
      */
     protected void firePresenterChangedEvent() {
-        eventBus.fireEvent( new PresenterChangedEvent( this ) );
+        PresenterChangedEvent.fire( eventBus, this );
     }
 
     /**
@@ -106,7 +106,7 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
      *                   was the originator of the 'revelation' request.
      */
     protected void firePresenterRevealedEvent( boolean originator ) {
-        eventBus.fireEvent( new PresenterRevealedEvent( this, originator ) );
+        PresenterRevealedEvent.fire( eventBus, this, originator );
     }
 
     /**

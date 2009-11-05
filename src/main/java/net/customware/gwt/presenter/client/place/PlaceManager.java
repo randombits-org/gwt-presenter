@@ -1,91 +1,36 @@
 package net.customware.gwt.presenter.client.place;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.History;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import net.customware.gwt.presenter.client.EventBus;
-
-@Singleton
-public class PlaceManager {
-
-    private class PlaceEventHandler implements ValueChangeHandler<String>, PlaceRevealedHandler,
-        PlaceChangedHandler {
-
-        @Override
-        public void onPlaceRevealed( PlaceRevealedEvent event ) {
-            updateHistory( event.getPlace() );
-        }
-
-        public void onPlaceChanged( PlaceChangedEvent event ) {
-            Place place = event.getPlace();
-            try {
-                if ( place.matchesRequest( PlaceRequest.fromHistoryToken( History.getToken() ) ) ) {
-                    // Only update if the change comes from a place that matches
-                    // the current location.
-                    updateHistory( event.getPlace() );
-                }
-            } catch ( PlaceParsingException e ) {
-                // Do nothing...
-            }
-        }
-
-        /**
-         * Handles change events from {@link History}.
-         */
-        public void onValueChange( ValueChangeEvent<String> event ) {
-            try {
-                eventBus
-                    .fireEvent( new PlaceRequestEvent( PlaceRequest.fromHistoryToken( event.getValue() ), true ) );
-            } catch ( PlaceParsingException e ) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private final EventBus eventBus;
-
-    @Inject
-    public PlaceManager( EventBus eventBus ) {
-        this.eventBus = eventBus;
-
-        PlaceEventHandler handler = new PlaceEventHandler();
-
-        // Register ourselves with the History API.
-        History.addValueChangeHandler( handler );
-
-        // Listen for manual place change events.
-        eventBus.addHandler( PlaceChangedEvent.getType(), handler );
-
-        // Listen for place revelation requests.
-        eventBus.addHandler( PlaceRevealedEvent.getType(), handler );
-    }
-
-    private void updateHistory( Place place ) {
-        updateHistory( place.createRequest() );
-    }
-
-    // Updates History if it has changed, without firing another
-    // 'ValueChangeEvent'.
-    private void updateHistory( PlaceRequest request ) {
-        String requestToken = request.toHistoryToken();
-        String historyToken = History.getToken();
-        if ( historyToken == null || !historyToken.equals( requestToken ) )
-            History.newItem( requestToken, false );
-    }
+/**
+ * Place managers work as an intermediary between the GWT {@link com.google.gwt.user.client.History} API
+ * and {@link Place}s. It sets up event listener relationships to synchronize them.
+ *
+ * @author David Peterson
+ */
+public interface PlaceManager {
 
     /**
-     * Fires a {@link PlaceRequestEvent} with the current history token, if
-     * present. If no history token is set, <code>false</code> is returned.
+     * Fires an event for the current place.
      *
-     * @return <code>true</code>
+     * @return <code>false</code> if there was no current place to fire.
      */
-    public boolean fireCurrentPlace() {
-        if ( History.getToken() != null ) {
-            History.fireCurrentHistoryState();
-            return true;
-        }
-        return false;
-    }
+    public boolean fireCurrentPlace();
+
+    /**
+     * Registers the place with the manager. This allows the place to be updated when
+     * the browser's history token is updated. Only a single instance of a given concrete
+     * Place implementation is registered
+     *
+     * @param place The place to register.
+     * @return <code>true</code> if an instance of the Place class had not already been registered.
+     */
+    boolean registerPlace( Place place );
+
+    /**
+     * Deregisters the place from the manager. Any instance of a given concrete Place will cause the
+     * deregistration - it doesn't have to be the original Place.
+     *
+     * @param place The place to deregister.
+     * @return <code>true</code> if the place was registered and has been successfully deregistered.
+     */
+    boolean deregisterPlace( Place place );
 }
