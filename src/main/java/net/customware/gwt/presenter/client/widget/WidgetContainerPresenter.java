@@ -122,12 +122,12 @@ public abstract class WidgetContainerPresenter<T extends WidgetContainerDisplay>
     @Override
     protected void onRevealDisplay() {
         if ( currentPresenter == null && presenters.size() > 0 ) {
-            setCurrentPresenter( presenters.get( 0 ) );
-        }
-
-        if ( currentPresenter != null ) {
+            // only reveal display of this presenter, event handler
+            // will set this presenter to be the current presenter
+            // and as a result the view of this presenter will be shown
+            presenters.get( 0 ).revealDisplay();
+        } else {
             currentPresenter.revealDisplay();
         }
     }
-
 }

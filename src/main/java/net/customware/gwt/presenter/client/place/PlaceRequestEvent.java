@@ -51,12 +51,4 @@ public class PlaceRequestEvent extends GwtEvent<PlaceRequestHandler> {
     static void fire( EventBus eventBus, PlaceRequest request, boolean fromHistory ) {
         eventBus.fireEvent( new PlaceRequestEvent( request, fromHistory ) );
     }
-
-    public static void fire( EventBus eventBus, String historyToken ) throws PlaceParsingException {
-        fire( eventBus, historyToken, false );
-    }
-
-    static void fire( EventBus eventBus, String historyToken, boolean fromHistory ) throws PlaceParsingException {
-        fire( eventBus, PlaceRequest.fromHistoryToken( historyToken ), fromHistory );
-    }
 }

@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class DefaultPlaceManager implements PlaceManager {
-
     private class PlaceEventHandler implements ValueChangeHandler<String>, PlaceRevealedHandler,
         PlaceChangedHandler {
 
@@ -20,12 +19,12 @@ public abstract class DefaultPlaceManager implements PlaceManager {
         public void onPlaceChanged( PlaceChangedEvent event ) {
             Place place = event.getPlace();
             try {
-                if ( place.matchesRequest( PlaceRequest.fromHistoryToken( History.getToken() ) ) ) {
+                if ( place.matchesRequest( tokenFormatter.toPlaceRequest( History.getToken() ) ) ) {
                     // Only update if the change comes from a place that matches
                     // the current location.
                     updateHistory( event.getPlace() );
                 }
-            } catch ( PlaceParsingException e ) {
+            } catch ( TokenFormatException e ) {
                 // Do nothing...
             }
         }
@@ -35,23 +34,27 @@ public abstract class DefaultPlaceManager implements PlaceManager {
          */
         public void onValueChange( ValueChangeEvent<String> event ) {
             try {
-                PlaceRequestEvent.fire( eventBus, event.getValue(), true );
-            } catch ( PlaceParsingException e ) {
+                PlaceRequestEvent.fire( eventBus, tokenFormatter.toPlaceRequest( event.getValue() ), true );
+            } catch ( TokenFormatException e ) {
                 e.printStackTrace();
             }
         }
+
     }
 
     private final EventBus eventBus;
 
+    private final TokenFormatter tokenFormatter;
+
     private final Map<Class<? extends Place>, Place> placeMap;
 
-    public DefaultPlaceManager( EventBus eventBus ) {
-        this( eventBus, (Place[]) null );
+    public DefaultPlaceManager( EventBus eventBus, TokenFormatter tokenFormatter ) {
+        this( eventBus, tokenFormatter, (Place[]) null );
     }
 
-    public DefaultPlaceManager( EventBus eventBus, Place... places ) {
+    public DefaultPlaceManager( EventBus eventBus, TokenFormatter tokenFormatter, Place... places ) {
         this.eventBus = eventBus;
+        this.tokenFormatter = tokenFormatter;
 
         PlaceEventHandler handler = new PlaceEventHandler();
 
@@ -98,10 +101,14 @@ public abstract class DefaultPlaceManager implements PlaceManager {
     // Updates History if it has changed, without firing another
     // 'ValueChangeEvent'.
     private void updateHistory( PlaceRequest request ) {
-        String requestToken = request.toHistoryToken();
-        String historyToken = History.getToken();
-        if ( historyToken == null || !historyToken.equals( requestToken ) )
-            History.newItem( requestToken, false );
+        try {
+            String requestToken = tokenFormatter.toHistoryToken( request );
+            String historyToken = History.getToken();
+            if ( historyToken == null || !historyToken.equals( requestToken ) )
+                History.newItem( requestToken, false );
+        } catch ( TokenFormatException e ) {
+            // Do nothing.
+        }
     }
 
     /**

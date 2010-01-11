@@ -62,7 +62,7 @@ public class PlaceRequest {
         return name;
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings( {"unchecked"} )
     public Set<String> getParameterNames() {
         if ( params != null ) {
             return params.keySet();
@@ -115,68 +115,17 @@ public class PlaceRequest {
         return 11 * ( name.hashCode() + ( params == null ? 0 : params.hashCode() ) );
     }
 
-    /**
-     * Outputs the place as a GWT history token.
-     *
-     * @return The place request as a history token.
-     */
-    public String toHistoryToken() {
-        StringBuilder out = new StringBuilder();
-        out.append( name );
-
-        if ( params != null && params.size() > 0 ) {
-            for ( Map.Entry<String, String> entry : params.entrySet() ) {
-                out.append( PARAM_SEPARATOR );
-                out.append( escape( entry.getKey() ) ).append( VALUE_SEPARATOR )
-                    .append( escape( entry.getValue() ) );
-            }
-        }
-        return out.toString();
-    }
-
     @Override
     public String toString() {
-        return toHistoryToken();
-    }
-
-    /**
-     * Parses a GWT history token into a {@link String} instance.
-     *
-     * @param token The token.
-     * @return The place, or <code>null</code> if the token could not be
-     *         parsed.
-     * @throws PlaceParsingException if the token could not be parsed.
-     */
-    public static PlaceRequest fromHistoryToken( String token ) throws PlaceParsingException {
-        PlaceRequest req = null;
-
-        int split = token.indexOf( PARAM_SEPARATOR );
-        if ( split == 0 ) {
-            throw new PlaceParsingException( "Place name is missing." );
-        } else if ( split == -1 ) {
-            req = new PlaceRequest( token );
-        } else if ( split >= 0 ) {
-            req = new PlaceRequest( token.substring( 0, split ) );
-            String paramsChunk = token.substring( split + 1 );
-            String[] paramTokens = paramsChunk.split( PARAM_PATTERN );
-            for ( String paramToken : paramTokens ) {
-                String[] param = paramToken.split( VALUE_PATTERN );
-                if ( param.length != 2 )
-                    throw new PlaceParsingException( "Bad parameter: Parameters require a single '"
-                        + VALUE_SEPARATOR + "' between the key and value." );
-                req = req.with( unescape( param[0] ), unescape( param[1] ) );
+        StringBuilder out = new StringBuilder();
+        out.append( "{" ).append( name );
+        if ( params != null && params.size() > 0 ) {
+            out.append( ": " );
+            for ( Map.Entry<String, String> entry : params.entrySet() ) {
+                out.append( entry.getKey() ).append( " = " ).append( entry.getValue() ).append( ";" );
             }
         }
-
-        return req;
+        out.append( "}" );
+        return out.toString();
     }
-
-    private static String escape( String value ) {
-        return value.replaceAll( PARAM_SEPARATOR, PARAM_ESCAPE ).replaceAll( VALUE_SEPARATOR, VALUE_ESCAPE );
-    }
-
-    private static String unescape( String value ) {
-        return value.replaceAll( PARAM_ESCAPE, PARAM_SEPARATOR ).replaceAll( VALUE_ESCAPE, VALUE_SEPARATOR );
-    }
-
 }
