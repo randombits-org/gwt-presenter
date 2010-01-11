@@ -118,7 +118,8 @@ public abstract class DefaultPlaceManager implements PlaceManager {
      * @return <code>true</code>
      */
     public boolean fireCurrentPlace() {
-        if ( History.getToken() != null ) {
+		String current = History.getToken();
+        if ( current != null && current.trim().length() > 0 ) {
             History.fireCurrentHistoryState();
             return true;
         }
