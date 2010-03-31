@@ -104,7 +104,7 @@ public abstract class Place {
      *
      * @param eventBus The event bus.
      */
-    protected void addHandlers( final EventBus eventBus ) {
+    public void addHandlers( final EventBus eventBus ) {
         placeRequestRegistration = eventBus.addHandler( PlaceRequestEvent.getType(), new PlaceRequestHandler() {
             public void onPlaceRequest( PlaceRequestEvent event ) {
                 PlaceRequest request = event.getRequest();
@@ -122,7 +122,7 @@ public abstract class Place {
      *
      * @param eventBus The event bus.
      */
-    protected void removeHandlers( EventBus eventBus ) {
+    public void removeHandlers( EventBus eventBus ) {
         if ( placeRequestRegistration != null ) {
             placeRequestRegistration.removeHandler();
             placeRequestRegistration = null;
