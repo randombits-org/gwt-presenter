@@ -100,7 +100,7 @@ public abstract class PresenterPlace<T extends Presenter> extends Place {
     }
 
     @Override
-    protected void addHandlers( final EventBus eventBus ) {
+    public void addHandlers( final EventBus eventBus ) {
         super.addHandlers( eventBus );
 
         presenterChangedRegistration = eventBus.addHandler( PresenterChangedEvent.getType(), new PresenterChangedHandler() {
@@ -129,7 +129,7 @@ public abstract class PresenterPlace<T extends Presenter> extends Place {
     }
 
     @Override
-    protected void removeHandlers( EventBus eventBus ) {
+    public void removeHandlers( EventBus eventBus ) {
         super.removeHandlers( eventBus );
 
         if ( presenterChangedRegistration != null ) {
