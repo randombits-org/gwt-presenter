@@ -64,9 +64,9 @@
 	</dependencies>
 
 	<scm>
-		<connection>scm:svn:http://gwt-presenter.googlecode.com/svn/trunk/</connection>
-		<developerConnection>scm:svn:https://gwt-presenter.googlecode.com/svn/trunk/</developerConnection>
-		<url>http://gwt-presenter.googlecode.com/svn/trunk/</url>
+		<connection>scm:hg:http://gwt-presenter.googlecode.com/hg</connection>
+		<developerConnection>scm:hg:https://gwt-presenter.googlecode.com/hg</developerConnection>
+		<url>http://gwt-presenter.googlecode.com/hg</url>
 	</scm>
 
 	<build>
