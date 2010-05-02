@@ -62,12 +62,11 @@ public class PlaceRequest {
         return name;
     }
 
-    @SuppressWarnings( {"unchecked"} )
     public Set<String> getParameterNames() {
         if ( params != null ) {
             return params.keySet();
         } else {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
     }
 
