@@ -1,6 +1,7 @@
 package net.customware.gwt.presenter.client.place;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -51,7 +52,7 @@ public class PlaceRequest {
 
     private PlaceRequest( PlaceRequest req, String name, String value ) {
         this.name = req.name;
-        this.params = new java.util.HashMap<String, String>();
+        this.params = new HashMap<String, String>();
         if ( req.params != null )
             this.params.putAll( req.params );
         if ( value != null )
