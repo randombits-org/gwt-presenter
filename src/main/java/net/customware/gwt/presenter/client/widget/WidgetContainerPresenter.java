@@ -69,7 +69,7 @@ public abstract class WidgetContainerPresenter<T extends WidgetContainerDisplay>
         // Handle revelation events from children
         registerHandler( eventBus.addHandler( PresenterRevealedEvent.getType(), new PresenterRevealedHandler() {
             public void onPresenterRevealed( PresenterRevealedEvent event ) {
-                if ( event.getPresenter() instanceof WidgetPresenter ) {
+                if ( event.getPresenter() instanceof WidgetPresenter<?> ) {
                     WidgetPresenter<?> presenter = (WidgetPresenter<?>) event.getPresenter();
                     if ( presenters.contains( presenter ) ) {
                         // Make this presenter the focus
