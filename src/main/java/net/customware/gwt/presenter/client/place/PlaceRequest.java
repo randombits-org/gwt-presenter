@@ -6,40 +6,16 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This class represents a 'request' for a place location. It includes the 'id'
- * of the place as well as any parameter values. It can convert from and to
- * String tokens for use with the GWT History.
- * <p/>
- * <p/>
- * Place request tokens are formatted like this:
- * <p/>
- * <code>#id(;key=value)*</code>
- * <p/>
- * <p/>
- * There is a mandatory 'id' value, followed by 0 or more key/value pairs,
- * separated by semi-colons (';'). A few examples follow:
- * <p/>
- * <ul>
- * <li> <code>#users</code> </li>
- * <li> <code>#user;name=j.blogs</code> </li>
- * <li> <code>#user-email;name=j.blogs;type=home</code> </li>
- * </ul>
- *
+ * This class represents a 'request' for a place location. 
+ * 
+ * <p>It includes the 'id' of the place as well as any parameter values.</p>
+ * 
+ * <p>PlaceRequests are usually created from GWT history strings by using a 
+ * {@link TokenFormatter}</p>
+ * 
  * @author David Peterson
  */
 public class PlaceRequest {
-
-    private static final String PARAM_SEPARATOR = ";";
-
-    private static final String PARAM_PATTERN = PARAM_SEPARATOR + "(?!" + PARAM_SEPARATOR + ")";
-
-    private static final String PARAM_ESCAPE = PARAM_SEPARATOR + PARAM_SEPARATOR;
-
-    private static final String VALUE_SEPARATOR = "=";
-
-    private static final String VALUE_PATTERN = VALUE_SEPARATOR + "(?!" + VALUE_SEPARATOR + ")";
-
-    private static final String VALUE_ESCAPE = VALUE_SEPARATOR + VALUE_SEPARATOR;
 
     private final String name;
 
