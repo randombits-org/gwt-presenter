@@ -77,7 +77,7 @@ public abstract class PresenterPlace<T extends Presenter> extends Place {
 
     public static WidgetPresenter<?> getWidgetPresenter( Place place ) {
         Presenter presenter = getPresenter( place );
-        if ( presenter instanceof WidgetPresenter )
+        if ( presenter instanceof WidgetPresenter<?> )
             return (WidgetPresenter<?>) presenter;
         else
             return null;
@@ -93,7 +93,7 @@ public abstract class PresenterPlace<T extends Presenter> extends Place {
      * @return The {@link Presenter}, if appropriate.
      */
     public static Presenter getPresenter( Place place ) {
-        if ( place instanceof PresenterPlace ) {
+        if ( place instanceof PresenterPlace<?> ) {
             return ( (PresenterPlace<?>) place ).getPresenter();
         }
         return null;
