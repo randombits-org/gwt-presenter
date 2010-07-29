@@ -4,6 +4,7 @@ import java.util.HashSet;
 
 import net.customware.gwt.presenter.client.EventBus;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
@@ -36,7 +37,7 @@ public abstract class DefaultPlaceManager implements PlaceManager {
             try {
                 PlaceRequestEvent.fire( eventBus, tokenFormatter.toPlaceRequest( event.getValue() ), true );
             } catch ( TokenFormatException e ) {
-                e.printStackTrace();
+                GWT.log("Failure when firing a PlaceRequestEvent from " + event.getValue() +" .", e);
             }
         }
 
