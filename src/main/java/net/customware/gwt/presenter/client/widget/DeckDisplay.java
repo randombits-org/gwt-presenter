@@ -5,6 +5,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class DeckDisplay extends DeckPanel implements WidgetContainerDisplay {
 
+    public DeckDisplay() {
+    }
+
     public void addWidget( Widget widget ) {
         this.add( widget );
     }
@@ -22,13 +25,4 @@ public class DeckDisplay extends DeckPanel implements WidgetContainerDisplay {
     public Widget asWidget() {
         return this;
     }
-
-    public void startProcessing() {
-        // Do nothing...
-    }
-
-    public void stopProcessing() {
-        // Do nothing...
-    }
-
 }

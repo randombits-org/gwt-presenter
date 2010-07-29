@@ -1,53 +1,36 @@
 package net.customware.gwt.presenter.client.place;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.History;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+/**
+ * Place managers work as an intermediary between the GWT {@link com.google.gwt.user.client.History} API
+ * and {@link Place}s. It sets up event listener relationships to synchronize them.
+ *
+ * @author David Peterson
+ */
+public interface PlaceManager {
 
-import net.customware.gwt.presenter.client.EventBus;
+    /**
+     * Fires an event for the current place.
+     *
+     * @return <code>false</code> if there was no current place to fire.
+     */
+    public boolean fireCurrentPlace();
 
-@Singleton
-public class PlaceManager implements ValueChangeHandler<String>, PlaceChangedHandler, PlaceRequestHandler {
-    private final EventBus eventBus;
+    /**
+     * Registers the place with the manager. This allows the place to be updated when
+     * the browser's history token is updated. Only a single instance of a given concrete
+     * Place implementation is registered
+     *
+     * @param place The place to register.
+     * @return <code>true</code> if an instance of the Place class had not already been registered.
+     */
+    boolean registerPlace( Place place );
 
-    @Inject
-    public PlaceManager( EventBus eventBus ) {
-        this.eventBus = eventBus;
-
-        // Register ourselves with the History API.
-        History.addValueChangeHandler( this );
-
-        // Listen for manual place change events.
-        eventBus.addHandler( PlaceChangedEvent.getType(), this );
-    }
-
-    public void onValueChange( ValueChangeEvent<String> event ) {
-        try {
-            eventBus.fireEvent( new PlaceRequestEvent( PlaceRequest.fromString( event.getValue() ), true ) );
-        } catch ( PlaceParsingException e ) {
-            e.printStackTrace();
-        }
-    }
-
-    public void onPlaceChange( PlaceChangedEvent event ) {
-        newPlace( event.getRequest() );
-    }
-
-    private void newPlace( PlaceRequest request ) {
-        History.newItem( request.toString(), false );
-    }
-
-    public void onPlaceRequest( PlaceRequestEvent event ) {
-        if ( !event.isFromHistory() ) {
-            newPlace( event.getRequest() );
-        }
-    }
-
-    public void fireCurrentPlace() {
-        if ( History.getToken() != null )
-            History.fireCurrentHistoryState();
-    }
-
+    /**
+     * Deregisters the place from the manager. Any instance of a given concrete Place will cause the
+     * deregistration - it doesn't have to be the original Place.
+     *
+     * @param place The place to deregister.
+     * @return <code>true</code> if the place was registered and has been successfully deregistered.
+     */
+    boolean deregisterPlace( Place place );
 }

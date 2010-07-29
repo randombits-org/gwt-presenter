@@ -6,9 +6,8 @@ public interface PlaceChangedHandler extends EventHandler {
     /**
      * Called after the current place has already changed. Allows handlers to
      * update any internal tracking, etc.
-     * 
-     * @param event
-     *            The event.
+     *
+     * @param event The event.
      */
-    void onPlaceChange( PlaceChangedEvent event );
+    void onPlaceChanged( PlaceChangedEvent event );
 }
