@@ -1,15 +1,13 @@
 package net.customware.gwt.presenter.client.place;
 
 import com.google.gwt.event.shared.GwtEvent;
+import net.customware.gwt.presenter.client.EventBus;
 
 /**
- * This event is triggered when the request has changed manually (ie, not due to a
- * {@link PlaceRequestEvent}). This allows the {@link PlaceManager} to keep
- * track of the current location. Other classes may, but will typically not need
- * to, implement {@link PlaceChangedHandler} to be informed of manual changes.
- * 
+ * This event is triggered when any {@link Place} has changed state. It may or
+ * may not be the current 'revealed' place.
+ *
  * @author David Peterson
- * 
  */
 public class PlaceChangedEvent extends GwtEvent<PlaceChangedHandler> {
 
@@ -21,15 +19,19 @@ public class PlaceChangedEvent extends GwtEvent<PlaceChangedHandler> {
         return TYPE;
     }
 
-    private final PlaceRequest request;
+    public static void fire( EventBus eventBus, Place place ) {
+        eventBus.fireEvent( new PlaceChangedEvent( place ) );
+    }
 
-    public PlaceChangedEvent( PlaceRequest request ) {
-        this.request = request;
+    private final Place place;
+
+    public PlaceChangedEvent( Place place ) {
+        this.place = place;
     }
 
     @Override
     protected void dispatch( PlaceChangedHandler handler ) {
-        handler.onPlaceChange( this );
+        handler.onPlaceChanged( this );
     }
 
     @Override
@@ -37,7 +39,7 @@ public class PlaceChangedEvent extends GwtEvent<PlaceChangedHandler> {
         return getType();
     }
 
-    public PlaceRequest getRequest() {
-        return request;
+    public Place getPlace() {
+        return place;
     }
 }

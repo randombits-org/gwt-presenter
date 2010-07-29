@@ -1,13 +1,8 @@
 package net.customware.gwt.presenter.client;
 
-import java.util.List;
-
-import net.customware.gwt.presenter.client.place.Place;
-import net.customware.gwt.presenter.client.place.PlaceRequest;
-import net.customware.gwt.presenter.client.place.PlaceRequestEvent;
-import net.customware.gwt.presenter.client.place.PlaceRequestHandler;
-
 import com.google.gwt.event.shared.HandlerRegistration;
+
+import java.util.List;
 
 public abstract class BasicPresenter<D extends Display> implements Presenter {
 
@@ -31,44 +26,35 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
     }
 
     public void bind() {
-        onBind();
-
-        if ( getPlace() != null ) {
-            registerHandler( eventBus.addHandler( PlaceRequestEvent.getType(), new PlaceRequestHandler() {
-
-                public void onPlaceRequest( PlaceRequestEvent event ) {
-                    Place place = getPlace();
-                    if ( place != null && place.equals( event.getRequest().getPlace() ) ) {
-                        BasicPresenter.this.onPlaceRequest( event.getRequest() );
-                        revealDisplay();
-                    }
-                }
-            } ) );
+        if ( !bound ) {
+            onBind();
+            bound = true;
         }
-        bound = true;
     }
 
     /**
      * Any {@link HandlerRegistration}s added will be removed when
      * {@link #unbind()} is called. This provides a handy way to track event
      * handler registrations when binding and unbinding.
-     * 
-     * @param handlerRegistration
-     *            The registration.
+     *
+     * @param handlerRegistration The registration.
      */
     protected void registerHandler( HandlerRegistration handlerRegistration ) {
         handlerRegistrations.add( handlerRegistration );
     }
 
     public void unbind() {
-        for ( HandlerRegistration reg : handlerRegistrations ) {
-            reg.removeHandler();
+        if ( bound ) {
+            bound = false;
+
+            for ( HandlerRegistration reg : handlerRegistrations ) {
+                reg.removeHandler();
+            }
+            handlerRegistrations.clear();
+
+            onUnbind();
         }
-        handlerRegistrations.clear();
 
-        onUnbind();
-
-        bound = false;
     }
 
     /**
@@ -87,7 +73,7 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
     /**
      * Checks if the presenter has been bound. Will be set to false after a call
      * to {@link #unbind()}.
-     * 
+     *
      * @return The current bound status.
      */
     public boolean isBound() {
@@ -96,32 +82,32 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
 
     /**
      * Returns the display for the presenter.
-     * 
+     *
      * @return The display.
      */
     public D getDisplay() {
         return display;
     }
 
-    protected PlaceRequest getPlaceRequest() {
-        return getPlace().request();
+    /**
+     * Fires a {@link PresenterChangedEvent} to the {@link EventBus}.
+     * Call this method any time the presenter's state has been modified.
+     */
+    protected void firePresenterChangedEvent() {
+        PresenterChangedEvent.fire( eventBus, this );
     }
 
     /**
-     * The {@link Place} that represents this Presenter.
-     * 
-     * @return The presenter's place.
+     * Fires a {@link PresenterRevealedEvent} to the {@link EventBus}.
+     * Implementations should call this when the presenter has been
+     * revealed onscreen.
+     *
+     * @param originator If set to true, this specifies that this presenter
+     *                   was the originator of the 'revelation' request.
      */
-    public abstract Place getPlace();
-
-    /**
-     * This method is called when a {@link PlaceRequestEvent} occurs that
-     * matches with the value from {@link #getPlace()}.
-     * 
-     * @param request
-     *            The request.
-     */
-    protected abstract void onPlaceRequest( PlaceRequest request );
+    protected void firePresenterRevealedEvent( boolean originator ) {
+        PresenterRevealedEvent.fire( eventBus, this, originator );
+    }
 
     /**
      * Triggers a {@link PresenterRevealedEvent}. Subclasses should override
@@ -129,7 +115,13 @@ public abstract class BasicPresenter<D extends Display> implements Presenter {
      * perform extra operations when being revealed.
      */
     public void revealDisplay() {
-        eventBus.fireEvent( new PresenterRevealedEvent( this ) );
+        onRevealDisplay();
+        firePresenterRevealedEvent( true );
     }
+
+    /**
+     * Called before firing a {@link net.customware.gwt.presenter.client.PresenterRevealedEvent}.
+     */
+    protected abstract void onRevealDisplay();
 
 }
