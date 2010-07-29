@@ -1,12 +1,12 @@
 package net.customware.gwt.presenter.client.place;
 
+import java.util.HashSet;
+
+import net.customware.gwt.presenter.client.EventBus;
+
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
-import net.customware.gwt.presenter.client.EventBus;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class DefaultPlaceManager implements PlaceManager {
     private class PlaceEventHandler implements ValueChangeHandler<String>, PlaceRevealedHandler,
@@ -46,7 +46,7 @@ public abstract class DefaultPlaceManager implements PlaceManager {
 
     private final TokenFormatter tokenFormatter;
 
-    private final Map<Class<? extends Place>, Place> placeMap;
+    private final HashSet<Place> registeredPlaces;
 
     public DefaultPlaceManager( EventBus eventBus, TokenFormatter tokenFormatter ) {
         this( eventBus, tokenFormatter, (Place[]) null );
@@ -67,7 +67,7 @@ public abstract class DefaultPlaceManager implements PlaceManager {
         // Listen for place revelation requests.
         eventBus.addHandler( PlaceRevealedEvent.getType(), handler );
 
-        placeMap = new HashMap<Class<? extends Place>, Place>();
+        registeredPlaces = new HashSet<Place>();
 
         if ( places != null ) {
             for ( Place place : places ) {
@@ -77,18 +77,18 @@ public abstract class DefaultPlaceManager implements PlaceManager {
     }
 
     public boolean registerPlace( Place place ) {
-        if ( !placeMap.containsKey( place.getClass() ) ) {
+        if ( !registeredPlaces.contains( place ) ) {
             place.addHandlers( eventBus );
-            placeMap.put( place.getClass(), place );
+            registeredPlaces.add( place );
             return true;
         }
         return false;
     }
 
     public boolean deregisterPlace( Place place ) {
-        if ( !placeMap.containsKey( place.getClass() ) ) {
+        if ( !registeredPlaces.contains( place ) ) {
             place.removeHandlers( eventBus );
-            placeMap.remove( place.getClass() );
+            registeredPlaces.remove( place );
             return true;
         }
         return false;
