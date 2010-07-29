@@ -53,10 +53,14 @@ public class ParameterTokenFormatter implements TokenFormatter {
             String[] paramTokens = paramsChunk.split( PARAM_PATTERN );
             for ( String paramToken : paramTokens ) {
                 String[] param = paramToken.split( VALUE_PATTERN );
-                if ( param.length != 2 )
+                if ( param.length == 1)
+                	req = req.with( unescape( param[0] ), "");
+                else if ( param.length == 2 )
+                	req = req.with( unescape( param[0] ), unescape( param[1] ) );
+                else
                     throw new TokenFormatException( "Bad parameter: Parameters require a single '"
                             + VALUE_SEPARATOR + "' between the key and value." );
-                req = req.with( unescape( param[0] ), unescape( param[1] ) );
+                
             }
         }
 
