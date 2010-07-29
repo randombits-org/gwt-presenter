@@ -81,7 +81,7 @@
 	<scm>
 		<connection>scm:hg:http://gwt-presenter.googlecode.com/hg</connection>
 		<developerConnection>scm:hg:https://gwt-presenter.googlecode.com/hg</developerConnection>
-		<url>http://gwt-presenter.googlecode.com/svn/hg</url>
+		<url>http://gwt-presenter.googlecode.com/hg</url>
 	</scm>
 
 	<build>
