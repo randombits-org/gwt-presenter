@@ -5,9 +5,9 @@ _Implementation of the Presenter section of a Model-View-Presenter (MVP) pattern
 
 Inspired by Ray Ryan's [Best Practices For Architecting Your GWT App](http://code.google.com/events/io/sessions/GoogleWebToolkitBestPractices.html) session at Google I/O 2009, this is an implementation of the 'Presenter' part of the Model-View-Presenter (MVP) design pattern discussed in the video.
 
-You may also be interested in the [gwt-dispatch][https://github.com/randombits-org/gwt-dispatch] library, which is an implementation of a 'command pattern' API for GWT.
+You may also be interested in the [gwt-dispatch](https://github.com/randombits-org/gwt-dispatch) library, which is an implementation of a 'command pattern' API for GWT.
 
-= Links =
+# Links
 
   * [Getting Started](https://github.com/randombits-org/gwt-presenter/wiki/GettingStarted) - A quick intro to the API.
   * [Release History](https://github.com/randombits-org/gwt-presenter/wiki/ReleaseHistory) - A list of recent changes to the API.
